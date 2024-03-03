@@ -1,5 +1,80 @@
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth, db } from "./utils/firebase";
+import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
+import { useDocument } from "react-firebase-hooks/firestore";
+
+import Login from "./components/Login";
+import Loading from "./components/Loading";
+import Sidebar from "./components/Sidebar";
+import Main from "./components/Main";
+import { doc, setDoc } from "firebase/firestore";
+import Lobby from "./components/Lobby";
+
 const App = () => {
-  return <div>App</div>;
+  const id = window.location.pathname.substring(1);
+
+  const [user, loading] = useAuthState(auth);
+  const [value, typing] = useDocument(
+    doc(db, "groups", id || "QUTUKBcAeqmZ159rHe3J"),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
+  if (loading) return <Loading />;
+  if (!user) return <Login />;
+
+  if (!id) return <Lobby user={user} />;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const input = e.currentTarget.elements[0] as HTMLInputElement;
+
+    await setDoc(
+      doc(db, "groups", id),
+      {
+        chat: [
+          ...(value?.data()?.chat || []),
+          {
+            displayName: user.displayName,
+            uid: user.uid,
+            photoURL: user.photoURL,
+            content: input.value.trim(),
+            timestamp: Date.now(),
+          },
+        ],
+      },
+      {
+        merge: true,
+      }
+    );
+
+    input.value = "";
+  };
+
+  return (
+    <div className="flex flex-1 overflow-hidden">
+      <Sidebar user={user} users={value?.data()?.users} />
+      <div className="flex w-full flex-col gap-4 p-4">
+        <Main typing={typing} chat={value?.data()?.chat} />
+
+        <form
+          onSubmit={handleSubmit}
+          className="bg-bg-300 p-1 rounded flex items-center gap-1 w-full mt-auto"
+        >
+          <input
+            type="text"
+            placeholder="Type a message here"
+            className="bg-transparent outline-none ring-0 w-full"
+          />
+          <button className="bg-blue-500 p-1 rounded">
+            <PaperAirplaneIcon className="w-5 h-5" />
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default App;
