@@ -5,7 +5,7 @@ import App from "./App.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <div className="bg-bg text-text h-screen flex flex-col overflow-hidden">
+    <div className="bg-bg text-text h-dvh flex flex-col overflow-hidden">
       <App />
     </div>
   </React.StrictMode>
