@@ -24,7 +24,7 @@ const Sidebar = ({
     >
       <div className="p-2 flex items-center gap-1 border-b border-bg-300">
         <XMarkIcon
-          className="w-5 h-5 cursor-pointer"
+          className="w-5 h-5 cursor-pointer md:hidden"
           onClick={() => setOpen && setOpen(false)}
         />
         <p>Group Users</p>

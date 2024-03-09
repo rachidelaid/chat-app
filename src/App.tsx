@@ -71,7 +71,7 @@ const App = () => {
           />
           <p>React Chat App</p>
         </div>
-        <div className="flex w-full flex-col gap-4 p-4 h-full">
+        <div className="flex w-full flex-col gap-2 md:gap-4 p-2 md:p-4 h-[calc(100%-40px)]">
           <Main typing={typing} chat={value?.data()?.chat} />
 
           <form
